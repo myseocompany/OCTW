@@ -209,3 +209,6 @@ __marimo__/
 # OCW - sensitive files
 *.key
 *.pem
+
+# macOS Finder metadata
+*.DS_Store
