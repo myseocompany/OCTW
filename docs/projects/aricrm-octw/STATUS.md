@@ -13,7 +13,7 @@
 - Upstream comparison SHA: `299c33b368c579db62339ccdccc51e53bca5345c`
 - AriCRM SHA audited: not recorded — baseline blocker
 - OpenClaw version/image digest: not recorded — baseline blocker
-- Project-document commit SHA: none; `docs/projects/aricrm-octw` is untracked — baseline blocker
+- Project-document baseline: introduced in commit `1f7b660`; each approval/re-audit must record its exact reviewed revision
 - Requirements: `SPEC.md`
 - Delivery tasks: `PLAN.md`
 - Architecture decisions: `DECISIONS.md`
@@ -30,7 +30,7 @@ did not implement ordered deletion or tombstones.
 - Chose a separate OCTW host; see `DECISIONS.md` D-002.
 - Parsed/compiled the current Python source and tests successfully with `python3 -m compileall -q src tests` using Python 3.14.5.
 - Validated `docker compose config -q`; it passed while warning that `OCTW_KEK` was unset and defaulted to an empty string.
-- Reconciled `GOAL.md`, `SPEC.md`, `PLAN.md`, `STATUS.md`, and `DECISIONS.md` at the working-tree level.
+- Reconciled and versioned `GOAL.md`, `SPEC.md`, `PLAN.md`, `STATUS.md`, and `DECISIONS.md`; the set was introduced in commit `1f7b660`.
 
 These checks do not establish runtime correctness or production readiness.
 
@@ -39,23 +39,25 @@ These checks do not establish runtime correctness or production readiness.
 - `uv` and `pytest` are unavailable, so the automated suite was not executed.
 - No end-to-end Docker/OpenClaw, HTTP/WebSocket, failure-injection, load, backup, restore, or deletion test was performed.
 - No AriCRM source SHA or OpenClaw image digest is attached to this audit.
-- The project documents are not tracked by Git, so their current contents have no document commit SHA.
+- The initial document set is tracked; the future approval record must still identify the exact reviewed revision.
 
 ## Open findings
 
 Each finding has a stable ID, evidence, specification requirement, and implementation
 task. A finding closes only when `PLAN.md` evidence exists at a committed source SHA.
 
-### P0 — Governance and baseline
+### Resolved — Governance
 
-#### GOV-001 — Project documents are outside version control
+#### GOV-001 — Project documents were outside version control
 
-`git ls-files docs/projects/aricrm-octw` returns no files. `SPEC.md` §14 requires a
-document commit SHA, making approval unverifiable until the complete directory is
-committed.
+Resolved by commit `1f7b660`, which introduced all five files under
+`docs/projects/aricrm-octw`. Approval remains blocked by GOV-002 and Proposed decisions,
+not by absence of tracked documents.
 
 - Requirement: `SPEC.md` §14.
-- Task: `PLAN.md` Phase 0 — commit documents and create the baseline manifest.
+- Evidence: commit `1f7b660`; `PLAN.md` Phase 0.
+
+### P0 — Governance and baseline
 
 #### GOV-002 — Baseline lacks AriCRM and OpenClaw identity
 
@@ -300,15 +302,13 @@ kill switch, §13 gate instrumentation, or approved D-013 retention/recovery pol
 
 ## Recommendation
 
-Do not approve or deploy OCTW as an AriCRM dependency. First commit the complete project
-documentation and baseline manifest, resolve D-010 through D-013, and then execute
-`PLAN.md` Phase 1. Source changes must close findings by stable ID with automated or
-reproducible evidence.
+Do not approve or deploy OCTW as an AriCRM dependency. Complete the baseline manifest,
+resolve D-010 through D-013, and then execute `PLAN.md` Phase 1. Source changes must
+close findings by stable ID with automated or reproducible evidence.
 
 ## Next action
 
-1. Version the project documents and record their commit SHA.
-2. Complete the missing AriCRM/OpenClaw baseline fields.
-3. Review and resolve D-010 through D-013.
-4. Implement Phase 1 beginning with startup rejection, internal/service authentication,
+1. Complete the missing AriCRM/OpenClaw baseline fields and record the exact document revision reviewed.
+2. Review and resolve D-010 through D-013.
+3. Implement Phase 1 beginning with startup rejection, internal/service authentication,
    edge authorization, Host-header fallback removal, worker separation, and migrations.

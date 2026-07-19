@@ -19,7 +19,7 @@ Closing a checkbox requires code, automated evidence where applicable, and an up
 - [x] Fork `kumanday/OCTW` into `myseocompany/OCTW`. (`SPEC.md` §14)
 - [x] Keep `origin` on the fork and `upstream` on the original. (`SPEC.md` §14)
 - [x] Complete a static architecture and security audit at OCTW SHA `299c33b368c579db62339ccdccc51e53bca5345c`. (`SPEC.md` §14)
-- [ ] Commit all files under `docs/projects/aricrm-octw` and record their commit SHA. (`SPEC.md` §14)
+- [x] Commit all files under `docs/projects/aricrm-octw`; the document set was introduced by commit `1f7b660`. (`SPEC.md` §14)
 - [ ] Create the baseline manifest with OCTW/upstream SHA, AriCRM SHA, OpenClaw version/digest, tool versions, commands, results, limitations, date, and reviewer. (`SPEC.md` §14)
 - [ ] Record which findings remain after source commits `6c94917`, `450f302`, and `299c33b`; do not infer closure from commit titles. (`SPEC.md` §14; `STATUS.md`)
 - [ ] Approve `GOAL.md` and `SPEC.md`, and resolve Proposed decisions D-010 through D-013. (`SPEC.md` status; `DECISIONS.md`)

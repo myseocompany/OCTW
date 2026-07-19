@@ -429,6 +429,6 @@ must record:
 
 The OCTW source baseline inspected for this draft is
 `299c33b368c579db62339ccdccc51e53bca5345c`. This does not complete the baseline:
-the AriCRM SHA, OpenClaw digest, committed document SHA, and executable test evidence
-remain required. The project documents themselves must be version-controlled before any
-approval is considered verifiable.
+the AriCRM SHA, OpenClaw digest, exact approved document revision, and executable test
+evidence remain required. The project document set was introduced in commit `1f7b660`;
+each approval or re-audit must record the exact repository revision it reviewed.
