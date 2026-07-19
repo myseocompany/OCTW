@@ -21,7 +21,7 @@ Closing a checkbox requires code, automated evidence where applicable, and an up
 - [x] Complete a static architecture and security audit at OCTW SHA `299c33b368c579db62339ccdccc51e53bca5345c`. (`SPEC.md` §14)
 - [x] Commit all files under `docs/projects/aricrm-octw`; the document set was introduced by commit `1f7b660`. Later doc-only revisions (e.g. `a25781e`) must be recorded per re-audit. (`SPEC.md` §14)
 - [ ] Create the baseline manifest with OCTW/upstream SHA, AriCRM SHA, OpenClaw version/digest, tool versions, commands, results, limitations, date, and reviewer. (`SPEC.md` §14)
-- [ ] Confirm the upstream comparison SHA with `git fetch upstream && git log upstream/main -1` and record it in the baseline manifest. (`SPEC.md` §14)
+- [x] Confirm the upstream comparison SHA with `git fetch upstream && git log upstream/main -1`: `299c33b368c579db62339ccdccc51e53bca5345c`; record it in the baseline manifest. (`SPEC.md` §14)
 - [ ] Record which findings remain after source commits `6c94917`, `450f302`, and `299c33b`; do not infer closure from commit titles. (`SPEC.md` §14; `STATUS.md`)
 - [ ] Approve `GOAL.md` and `SPEC.md`, and resolve Proposed decisions D-010 through D-013. (`SPEC.md` status; `DECISIONS.md`)
 - [ ] Obtain privacy/legal and operations approval for D-013 or replace its proposed values. (`SPEC.md` §3 and §10.1)

@@ -11,7 +11,7 @@
 - Branch: `main`
 - OCTW source audited: `299c33b368c579db62339ccdccc51e53bca5345c`
 - Document revision audited: `a25781e` (docs only; source baseline unchanged)
-- Upstream comparison SHA: pending — must be confirmed with `git fetch upstream && git log upstream/main -1` and recorded in the baseline manifest
+- Upstream comparison SHA: `299c33b368c579db62339ccdccc51e53bca5345c` — confirmed with `git fetch upstream && git log upstream/main -1`; must be recorded in the baseline manifest
 - AriCRM SHA audited: not recorded — baseline blocker
 - OpenClaw version/image digest: not recorded — baseline blocker
 - Project-document baseline: introduced in commit `1f7b660`; each approval/re-audit must record its exact reviewed revision
