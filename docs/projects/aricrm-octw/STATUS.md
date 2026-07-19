@@ -10,7 +10,8 @@
 - OCTW upstream: `https://github.com/kumanday/OCTW`
 - Branch: `main`
 - OCTW source audited: `299c33b368c579db62339ccdccc51e53bca5345c`
-- Upstream comparison SHA: `299c33b368c579db62339ccdccc51e53bca5345c`
+- Document revision audited: `a25781e` (docs only; source baseline unchanged)
+- Upstream comparison SHA: pending — must be confirmed with `git fetch upstream && git log upstream/main -1` and recorded in the baseline manifest
 - AriCRM SHA audited: not recorded — baseline blocker
 - OpenClaw version/image digest: not recorded — baseline blocker
 - Project-document baseline: introduced in commit `1f7b660`; each approval/re-audit must record its exact reviewed revision
@@ -97,7 +98,7 @@ The edge defines only HTTP `api_route` methods and no WebSocket route
 #### FUN-004 — Tenant networks have no controlled provider egress
 
 Tenant networks are created with `internal=True` and no egress path is attached
-(`src/octw/orchestrator/docker_orch.py:92-105`).
+(`src/octw/orchestrator/docker_orch.py:92-106`).
 
 - Requirement: `SPEC.md` §8.
 - Task: `PLAN.md` Phase 1 — controlled egress and blocked-destination tests.
@@ -234,7 +235,7 @@ A non-zero exit is accepted when output contains `Updated` and `openclaw.json`
 #### REL-005 — Hibernation is defined but not running
 
 `HibernationScheduler` exists (`src/octw/orchestrator/hibernation.py:18-74`) but has no
-constructor/caller, and edge requests do not update activity
+instantiation site or caller, and edge requests do not update activity
 (`src/octw/edge/proxy.py:90-129`).
 
 - Requirement: `SPEC.md` §8 and §10.
