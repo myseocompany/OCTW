@@ -11,7 +11,7 @@ validation.
 
 | Component | Repository/branch | Commit or digest | Evidence |
 |---|---|---|---|
-| OCTW fork | `https://github.com/myseocompany/OCTW`, `codex/document-aricrm-octw-project` | `f23d32b80a66b155b0e641526417d04412843a32` | `git rev-parse HEAD` |
+| OCTW fork | `https://github.com/myseocompany/OCTW`, `codex/document-aricrm-octw-project` | `1a451a79ed09a0919e74470e239480236ce19efd` | `git rev-parse HEAD` |
 | OCTW source audited | `https://github.com/myseocompany/OCTW`, `main` | `299c33b368c579db62339ccdccc51e53bca5345c` | Static audit evidence in `STATUS.md` |
 | OCTW upstream comparison | `https://github.com/kumanday/OCTW`, `upstream/main` | `299c33b368c579db62339ccdccc51e53bca5345c` | `git fetch upstream && git log upstream/main -1` |
 | AriCRM integration candidate | `https://github.com/myseocompany/aricrm.git`, `main` | `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` | `git -C ../aricrm rev-parse HEAD`; working tree has 121 changed/untracked paths, so this is not an audit-approved source baseline |
