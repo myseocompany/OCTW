@@ -225,6 +225,17 @@ runs schema creation (`src/octw/common/config.py:9-24`;
 - Requirement: `SPEC.md` §4.
 - Task: `PLAN.md` Phase 1 — startup guard and negative tests.
 
+#### SEC-009 — Malformed OCTW_KEK produces opaque ValueError instead of startup rejection
+
+When `OCTW_KEK` is present but not valid 64-character hex, vault initialization calls
+`bytes.fromhex(kek_env)` directly and raises an unhandled `ValueError` during request
+dependency resolution (`src/octw/vault/envelope.py:29-31`). This surfaces as `500
+Internal Server Error` instead of a deterministic startup rejection with an actionable
+configuration error.
+
+- Requirement: `SPEC.md` §4.
+- Task: `PLAN.md` Phase 1 — startup guard rejects absent or invalid KEK before serving traffic.
+
 ### P0 — Reliability and data lifecycle
 
 #### REL-001 — Blocking Docker work runs in async request handlers
