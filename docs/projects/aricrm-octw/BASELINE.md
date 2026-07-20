@@ -49,22 +49,24 @@ daemon; Docker client/server version `29.4.0`.
 | `OCTW_KEK=test-kek-not-production OCTW_JWT_SECRET=test-jwt-not-production OCTW_ZAI_API_KEY=test-provider-key docker compose up -d --build` | Failed before health checks because local port `6379` was already allocated. The partial stack was removed with `docker compose down -v`. |
 | `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml up -d --build` with the same test environment | Passed start; DB and Redis reached Docker `healthy`; API and edge processes logged `Application startup complete`. The temporary override removed DB/Redis host ports and added API/edge alternate ports for local validation. |
 | `docker compose exec -T octw-api curl -fsS http://127.0.0.1:8000/health` | Passed; returned `{"status":"ok"}`. |
-| `docker compose exec -T octw-edge curl -fsS http://127.0.0.1:8443/health` | Failed with HTTP `404`; the edge health route is shadowed by the slug route. |
+| `python3 -m pytest tests/unit/test_edge_proxy.py` | Not run on the host; Python 3.14 is present but `pytest` is not installed. |
+| `docker run --rm --entrypoint /app/.venv/bin/python octw-octw-edge -c '...'` edge `TestClient` health check | Passed; returned `200 {"status":"ok","service":"octw-edge"}`. |
+| `curl -fsS http://127.0.0.1:18443/health` after the REL-009 route-order fix | Passed; returned `{"status":"ok","service":"octw-edge"}` from the Compose edge service. |
 | `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml down -v` | Passed; stopped and removed API, edge, DB, Redis, network, and the test database volume. |
 
 ## Limitations and closure requirements
 
-- OCTW defaults now pin this image, but Docker/OpenClaw lifecycle and compatibility
-  tests still do not pass: Compose start/stop completed only with a local port
-  override, API health passed, edge health returned `404`, and no tenant OpenClaw
-  runtime was provisioned with the pinned digest.
+- OCTW defaults now pin this image, and the minimal Compose start/health/stop cycle
+  passes with a local port override. Full tenant OpenClaw runtime provisioning with the
+  pinned digest has not yet been exercised.
 - AriCRM needs a dedicated `OpenClawInstance` model/client/jobs, a scoped service
   identity, explicit platform-admin authorization, and an OCTW callback receiver before
   integration implementation can begin; see `PLAN.md` Phase 3.
 - `uv` and `pytest` are unavailable in this environment; the automated suite was not
   executed. The new configuration-default assertion also could not run because
   `pydantic_settings` is not installed in the active Python environment.
-- Record the exact committed document revision reviewed for approval or re-audit.
+- Continue recording the exact committed document revision for each future approval or
+  re-audit.
 
 This manifest supports `SPEC.md` §14 and does not change the no-go recommendation in
 `STATUS.md`.

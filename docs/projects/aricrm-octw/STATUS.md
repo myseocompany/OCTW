@@ -43,8 +43,9 @@ These checks do not establish runtime correctness or production readiness.
 
 - `uv` and `pytest` are unavailable, so the automated suite was not executed.
 - Docker Compose start/stop was attempted with the pinned OpenClaw digest in OCTW
-  defaults. DB/Redis reached healthy and API health passed, but edge health returned
-  `404` and no tenant OpenClaw runtime was provisioned with the digest.
+  defaults. Default Compose still conflicts with a local `6379` listener, but the
+  temporary local override reached DB/Redis healthy and API/edge health passed.
+  No tenant OpenClaw runtime was provisioned with the digest.
 - No end-to-end OpenClaw tenant lifecycle, HTTP/WebSocket, failure-injection, load, backup, restore, or deletion test was performed.
 - AriCRM was reviewed in a clean detached worktree, but its OCTW integration remains unimplemented; the OpenClaw digest is resolved and identity-validated, but not lifecycle-compatibility validated.
 - The initial document set is tracked; the future approval record must still identify the exact reviewed revision.
@@ -65,14 +66,30 @@ documents.
 - Requirement: `SPEC.md` §14.
 - Evidence: commit `1f7b660`; `PLAN.md` Phase 0.
 
+### Resolved — Reliability and data lifecycle
+
+#### REL-009 — Edge health route was shadowed by tenant slug route
+
+Resolved by the REL-009 fix commit, which registers `/health` before
+`/{slug}/{path:path}` and adds a focused edge health-route regression test.
+The Compose start/health/stop validation passes with the local port override documented
+in `BASELINE.md`.
+
+- Requirement: `SPEC.md` §3, §13, and §14.
+- Evidence: `src/octw/edge/proxy.py:90`; `tests/unit/test_edge_proxy.py:8`;
+  `BASELINE.md` Commands and results.
+- Follow-up: full tenant OpenClaw runtime provisioning with the pinned digest remains
+  Phase 1 lifecycle evidence, not this edge health-route fix.
+
 ### P0 — Governance and baseline
 
 #### GOV-002 — Baseline approval evidence remains incomplete
 
 The manifest records clean AriCRM audit evidence, OpenClaw version/digest, tool versions,
 commands, results, and limitations. D-010 through D-013 are now approved for the pilot,
-but Docker/OpenClaw lifecycle compatibility testing and the exact committed document
-revision remain required.
+the approved document revision is recorded, and the minimal Compose edge health cycle
+passes. Full tenant OpenClaw lifecycle compatibility evidence remains required before
+production approval.
 
 - Requirement: `SPEC.md` §14.
 - Task: `PLAN.md` Phase 0 — pinned OpenClaw lifecycle compatibility validation and committed approval revision; see `BASELINE.md`.
@@ -278,17 +295,6 @@ No completed runtime validation demonstrates the objectives proposed in `SPEC.md
 - Requirement: `SPEC.md` §10.1 and §13; accepted pilot decision D-013.
 - Task: `PLAN.md` Phase 4 — backup configuration and isolated restore exercise.
 
-#### REL-009 — Docker/OpenClaw lifecycle compatibility test does not pass
-
-Compose start/stop was validated only with a temporary local override because host port
-`6379` was already allocated. DB/Redis reached Docker `healthy`, API `/health` passed
-inside Compose, and `docker compose down -v` removed the test stack, but edge `/health`
-returned `404` and no tenant OpenClaw runtime was provisioned with the pinned digest.
-
-- Requirement: `SPEC.md` §3, §13, and §14.
-- Evidence: `BASELINE.md` Commands and results; `src/octw/edge/proxy.py:90-145`.
-- Task: `PLAN.md` Phase 0/1 — repair lifecycle health validation and add Docker lifecycle tests before treating the pin as supported.
-
 ### P1 — AriCRM integration and production policy
 
 #### INT-001 — AriCRM service identity and scopes do not exist
@@ -329,13 +335,11 @@ kill switch, §13 gate instrumentation, or tested D-013 retention/recovery evide
 
 ## Recommendation
 
-Do not deploy OCTW as an AriCRM dependency. Complete the baseline manifest, fix
-REL-009, and then execute `PLAN.md` Phase 1. Source changes must close findings by
-stable ID with automated or reproducible evidence.
+Do not deploy OCTW as an AriCRM dependency. Use the committed baseline to execute
+`PLAN.md` Phase 1, beginning with startup safety and internal authentication. Source
+changes must close findings by stable ID with automated or reproducible evidence.
 
 ## Next action
 
-1. Fix REL-009 and rerun Docker/OpenClaw lifecycle validation with the pinned digest.
-2. Record the exact committed document revision reviewed.
-3. Implement Phase 1 beginning with startup rejection, internal/service authentication,
+1. Implement Phase 1 beginning with startup rejection, internal/service authentication,
    edge authorization, Host-header fallback removal, worker separation, and migrations.
