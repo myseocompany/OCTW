@@ -70,7 +70,7 @@ documents.
 
 #### REL-009 — Edge health route was shadowed by tenant slug route
 
-Resolved by the REL-009 fix commit, which registers `/health` before
+Resolved by commit `ac71e3b`, which registers `/health` before
 `/{slug}/{path:path}` and adds a focused edge health-route regression test.
 The Compose start/health/stop validation passes with the local port override documented
 in `BASELINE.md`.
@@ -78,6 +78,7 @@ in `BASELINE.md`.
 - Requirement: `SPEC.md` §3, §13, and §14.
 - Evidence: `src/octw/edge/proxy.py:90`; `tests/unit/test_edge_proxy.py:8`;
   `BASELINE.md` Commands and results.
+- Commit evidence: `ac71e3b0d64b19d2cdc7cc887e7cb60a64a6c2fb`.
 - Follow-up: full tenant OpenClaw runtime provisioning with the pinned digest remains
   Phase 1 lifecycle evidence, not this edge health-route fix.
 

@@ -49,10 +49,11 @@ daemon; Docker client/server version `29.4.0`.
 | `OCTW_KEK=test-kek-not-production OCTW_JWT_SECRET=test-jwt-not-production OCTW_ZAI_API_KEY=test-provider-key docker compose up -d --build` | Failed before health checks because local port `6379` was already allocated. The partial stack was removed with `docker compose down -v`. |
 | `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml up -d --build` with the same test environment | Passed start; DB and Redis reached Docker `healthy`; API and edge processes logged `Application startup complete`. The temporary override removed DB/Redis host ports and added API/edge alternate ports for local validation. |
 | `docker compose exec -T octw-api curl -fsS http://127.0.0.1:8000/health` | Passed; returned `{"status":"ok"}`. |
-| `python3 -m pytest tests/unit/test_edge_proxy.py` | Not run on the host; Python 3.14 is present but `pytest` is not installed. |
+| `uv run pytest -q` | Passed; 33 tests passed with 13 warnings. |
 | `docker run --rm --entrypoint /app/.venv/bin/python octw-octw-edge -c '...'` edge `TestClient` health check | Passed; returned `200 {"status":"ok","service":"octw-edge"}`. |
 | `curl -fsS http://127.0.0.1:18443/health` after the REL-009 route-order fix | Passed; returned `{"status":"ok","service":"octw-edge"}` from the Compose edge service. |
 | `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml down -v` | Passed; stopped and removed API, edge, DB, Redis, network, and the test database volume. |
+| Rerun at HEAD `a6b6728` after REL-009 fix | Passed with `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml up -d --build`; DB and Redis reached Docker `healthy`; API `/health` returned `{"status":"ok"}`; edge `/health` returned `{"status":"ok","service":"octw-edge"}`; `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml down -v` removed the stack and test volume. |
 
 ## Limitations and closure requirements
 
@@ -62,9 +63,8 @@ daemon; Docker client/server version `29.4.0`.
 - AriCRM needs a dedicated `OpenClawInstance` model/client/jobs, a scoped service
   identity, explicit platform-admin authorization, and an OCTW callback receiver before
   integration implementation can begin; see `PLAN.md` Phase 3.
-- `uv` and `pytest` are unavailable in this environment; the automated suite was not
-  executed. The new configuration-default assertion also could not run because
-  `pydantic_settings` is not installed in the active Python environment.
+- Project tests now run through `uv run pytest -q` in this environment. The automated
+  suite passed locally; CI confirmation remains the GitHub Actions gate.
 - Continue recording the exact committed document revision for each future approval or
   re-audit.
 
