@@ -10,7 +10,7 @@
 - OCTW upstream: `https://github.com/kumanday/OCTW`
 - Branch: `main`
 - OCTW source audited: `299c33b368c579db62339ccdccc51e53bca5345c`
-- Document revision audited: `1a451a7` (includes the OpenClaw pin and baseline manifest)
+- Document revision audited: `d6fddaa3582911a7633fcc2f06e7eb0ad4466c05` (approved planning baseline)
 - Upstream comparison SHA: `299c33b368c579db62339ccdccc51e53bca5345c` — confirmed with `git fetch upstream && git log upstream/main -1`; must be recorded in the baseline manifest
 - AriCRM SHA audited: `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` on `main`, reviewed in a clean detached worktree; the original worktree was not modified
 - OpenClaw version/image digest: `2026.7.1`; `ghcr.io/openclaw/openclaw@sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c` — pulled and verified with `openclaw --version`; lifecycle compatibility validation remains required
