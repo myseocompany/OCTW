@@ -2,9 +2,9 @@
 
 ## Status
 
-Draft for implementation planning. It must not be approved until the reproducible
-baseline in section 14 is committed and every open decision in this document has an
-owner and acceptance test.
+Approved for implementation planning. Production approval still requires the
+reproducible baseline evidence in section 14, closed P0 findings, and passing
+acceptance tests.
 
 - Last reviewed: 2026-07-19
 - Source baseline: OCTW `299c33b368c579db62339ccdccc51e53bca5345c`
@@ -47,7 +47,7 @@ Authorized user --> OCTW edge --> isolated tenant ingress --> OpenClaw gateway
 
 ### 2.1 Trust boundary and edge decision
 
-Decision reference: `DECISIONS.md` D-010 (Proposed).
+Decision reference: `DECISIONS.md` D-010 (Accepted for pilot).
 
 For the pilot, OCTW uses a shared edge as a trusted platform component. It may join each
 tenant's ingress network, but only the worker may attach or detach it. A compromised
@@ -86,8 +86,8 @@ sanitized tombstone for the retention period. Reuse of an external reference is 
 only after deletion has succeeded, the seven-day pilot cooldown has elapsed, and a new
 idempotent creation request explicitly requests a new instance.
 
-The seven-day value is proposed policy under `DECISIONS.md` D-013, not approved
-production policy.
+The seven-day value is approved pilot policy under `DECISIONS.md` D-013, not general
+availability policy.
 
 ## 4. Authentication and authorization
 
@@ -107,7 +107,7 @@ production policy.
 
 ## 5. Platform API
 
-Decision reference: `DECISIONS.md` D-011 (Proposed).
+Decision reference: `DECISIONS.md` D-011 (Accepted).
 
 New endpoints live under `/api/v1/platform`. JSON uses `snake_case`. Every mutating
 request requires `X-Request-Id` and `Idempotency-Key`, including start, stop, restart,
@@ -309,7 +309,7 @@ Versioned workspace templates may contain `AGENTS.md`, `SOUL.md`, `IDENTITY.md`,
 
 ### 9.1 Secret reference contract
 
-Decision reference: `DECISIONS.md` D-012 (Proposed).
+Decision reference: `DECISIONS.md` D-012 (Accepted).
 
 A secret slot is a stable, allowlisted semantic name declared by a versioned provider
 profile or workspace template, for example `provider.primary_api_key`. Slots map to
@@ -348,8 +348,7 @@ written to generated configuration or persistent disk.
 
 ### 10.1 Deprovisioning, retention, and recovery
 
-Decision reference: `DECISIONS.md` D-013 (Proposed; privacy/legal and operations
-approval required).
+Decision reference: `DECISIONS.md` D-013 (Accepted for pilot).
 
 `DELETE` first commits desired state `deleted`, a deletion operation, an audit event,
 and an outbox event transactionally. The worker then, in order:
@@ -370,7 +369,8 @@ Pilot retention defaults are: idempotency records and callback deduplication 30 
 operations and sanitized operational logs 90 days; audit/tombstone metadata 365 days;
 live secret ciphertext destroyed at verified deletion; encrypted backup copies expire
 within 30 days. Audit data never retains secret values or tenant-generated content.
-These defaults require privacy/legal approval before general availability.
+These defaults are approved for the pilot and require reapproval before general
+availability.
 
 Pilot recovery objectives are control-plane metadata RPO 15 minutes/RTO 4 hours and
 tenant workspace RPO 24 hours/RTO 8 hours. A quarterly restore exercise must recreate
@@ -416,8 +416,7 @@ remediation.
 
 ## 14. Reproducible baseline and approval evidence
 
-Before this specification can move from Draft to Approved, a committed baseline manifest
-must record:
+Before production approval, a committed baseline manifest must record:
 
 - OCTW fork URL, branch, and full commit SHA;
 - upstream OCTW URL and full comparison SHA;
@@ -427,8 +426,8 @@ must record:
 - evidence links or file/line references for every `STATUS.md` finding;
 - tests not run, environmental limitations, and the owner/date for closing each limitation.
 
-The OCTW source baseline inspected for this draft is
+The OCTW source baseline inspected for this specification is
 `299c33b368c579db62339ccdccc51e53bca5345c`. This does not complete the baseline:
-the AriCRM SHA, OpenClaw digest, exact approved document revision, and executable test
-evidence remain required. The project document set was introduced in commit `1f7b660`;
+the exact approved document revision and executable lifecycle evidence remain required.
+The project document set was introduced in commit `1f7b660`;
 each approval or re-audit must record the exact repository revision it reviewed.

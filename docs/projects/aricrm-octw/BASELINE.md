@@ -3,9 +3,9 @@
 ## Status
 
 Incomplete — not approval evidence. This manifest records reproducible inputs and
-validation results gathered on 2026-07-19. It cannot close GOV-002 while the AriCRM
-working tree is dirty and the pinned OpenClaw image has not passed the required runtime
-validation.
+validation results gathered on 2026-07-19. AriCRM has been audited at a clean worktree,
+but OpenClaw lifecycle compatibility evidence and the remaining baseline closure
+evidence are still required.
 
 ## Source identities
 
@@ -14,7 +14,7 @@ validation.
 | OCTW fork | `https://github.com/myseocompany/OCTW`, `codex/document-aricrm-octw-project` | `1a451a79ed09a0919e74470e239480236ce19efd` | `git rev-parse HEAD` |
 | OCTW source audited | `https://github.com/myseocompany/OCTW`, `main` | `299c33b368c579db62339ccdccc51e53bca5345c` | Static audit evidence in `STATUS.md` |
 | OCTW upstream comparison | `https://github.com/kumanday/OCTW`, `upstream/main` | `299c33b368c579db62339ccdccc51e53bca5345c` | `git fetch upstream && git log upstream/main -1` |
-| AriCRM integration candidate | `https://github.com/myseocompany/aricrm.git`, `main` | `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` | `git -C ../aricrm rev-parse HEAD`; working tree has 121 changed/untracked paths, so this is not an audit-approved source baseline |
+| AriCRM integration audit | `https://github.com/myseocompany/aricrm.git`, `main` | `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` | Clean detached worktree audit at this SHA; original worktree was not used |
 | OpenClaw | `ghcr.io/openclaw/openclaw` | `2026.7.1`; `ghcr.io/openclaw/openclaw@sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c` | OCI labels and `docker buildx imagetools inspect` |
 
 The OpenClaw image index resolves to Linux AMD64 manifest
@@ -46,13 +46,21 @@ daemon; Docker client/server version `29.4.0`.
 | OCI configuration-label inspection for the AMD64 manifest | Passed; recorded OpenClaw version and source revision above. |
 | `docker pull ghcr.io/openclaw/openclaw@sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c` | Passed through OrbStack. |
 | `docker run --rm --entrypoint openclaw ghcr.io/openclaw/openclaw@sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c --version` | Passed; returned `OpenClaw 2026.7.1`. |
+| `OCTW_KEK=test-kek-not-production OCTW_JWT_SECRET=test-jwt-not-production OCTW_ZAI_API_KEY=test-provider-key docker compose up -d --build` | Failed before health checks because local port `6379` was already allocated. The partial stack was removed with `docker compose down -v`. |
+| `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml up -d --build` with the same test environment | Passed start; DB and Redis reached Docker `healthy`; API and edge processes logged `Application startup complete`. The temporary override removed DB/Redis host ports and added API/edge alternate ports for local validation. |
+| `docker compose exec -T octw-api curl -fsS http://127.0.0.1:8000/health` | Passed; returned `{"status":"ok"}`. |
+| `docker compose exec -T octw-edge curl -fsS http://127.0.0.1:8443/health` | Failed with HTTP `404`; the edge health route is shadowed by the slug route. |
+| `docker compose -f docker-compose.yml -f /private/tmp/octw-compose-test.override.yml down -v` | Passed; stopped and removed API, edge, DB, Redis, network, and the test database volume. |
 
 ## Limitations and closure requirements
 
-- AriCRM must be reviewed at a clean, committed SHA; then update this manifest with the
-  exact reviewed revision and reviewer evidence.
-- OCTW defaults now pin this image; run Docker/OpenClaw lifecycle and compatibility
-  tests before treating it as supported for production.
+- OCTW defaults now pin this image, but Docker/OpenClaw lifecycle and compatibility
+  tests still do not pass: Compose start/stop completed only with a local port
+  override, API health passed, edge health returned `404`, and no tenant OpenClaw
+  runtime was provisioned with the pinned digest.
+- AriCRM needs a dedicated `OpenClawInstance` model/client/jobs, a scoped service
+  identity, explicit platform-admin authorization, and an OCTW callback receiver before
+  integration implementation can begin; see `PLAN.md` Phase 3.
 - `uv` and `pytest` are unavailable in this environment; the automated suite was not
   executed. The new configuration-default assertion also could not run because
   `pydantic_settings` is not installed in the active Python environment.

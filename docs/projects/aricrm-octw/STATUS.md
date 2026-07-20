@@ -12,7 +12,7 @@
 - OCTW source audited: `299c33b368c579db62339ccdccc51e53bca5345c`
 - Document revision audited: `1a451a7` (includes the OpenClaw pin and baseline manifest)
 - Upstream comparison SHA: `299c33b368c579db62339ccdccc51e53bca5345c` — confirmed with `git fetch upstream && git log upstream/main -1`; must be recorded in the baseline manifest
-- AriCRM SHA audited: candidate `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` on `main`; working tree is dirty, so a clean reviewed SHA remains a baseline blocker
+- AriCRM SHA audited: `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` on `main`, reviewed in a clean detached worktree; the original worktree was not modified
 - OpenClaw version/image digest: `2026.7.1`; `ghcr.io/openclaw/openclaw@sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c` — pulled and verified with `openclaw --version`; lifecycle compatibility validation remains required
 - Project-document baseline: introduced in commit `1f7b660`; each approval/re-audit must record its exact reviewed revision
 - Baseline manifest: `BASELINE.md` — incomplete; see its limitations and closure requirements
@@ -34,6 +34,7 @@ did not implement ordered deletion or tombstones.
 - Validated `docker compose config -q`; it passed while warning that `OCTW_KEK` was unset and defaulted to an empty string.
 - Confirmed `upstream/main` at `299c33b368c579db62339ccdccc51e53bca5345c` with `git fetch upstream`.
 - Resolved OpenClaw `2026.7.1` to its immutable OCI index digest, pulled it through OrbStack, and verified it with `openclaw --version`; see `BASELINE.md`.
+- Audited AriCRM at clean SHA `4b5539c72cf0a7cab93e7df0ac5920237255bdfd`: it has UUID tenancy, a database queue, and reusable signed-webhook/idempotency patterns, but no OCTW/OpenClaw model, client, service identity, callback receiver, or platform-admin authorization.
 - Reconciled and versioned `GOAL.md`, `SPEC.md`, `PLAN.md`, `STATUS.md`, and `DECISIONS.md`; the set was introduced in commit `1f7b660`.
 
 These checks do not establish runtime correctness or production readiness.
@@ -41,8 +42,11 @@ These checks do not establish runtime correctness or production readiness.
 ## Validation limitations
 
 - `uv` and `pytest` are unavailable, so the automated suite was not executed.
-- No end-to-end Docker/OpenClaw, HTTP/WebSocket, failure-injection, load, backup, restore, or deletion test was performed.
-- The AriCRM candidate SHA is not an approved baseline because its working tree is dirty; the OpenClaw digest is resolved but not runtime-validated.
+- Docker Compose start/stop was attempted with the pinned OpenClaw digest in OCTW
+  defaults. DB/Redis reached healthy and API health passed, but edge health returned
+  `404` and no tenant OpenClaw runtime was provisioned with the digest.
+- No end-to-end OpenClaw tenant lifecycle, HTTP/WebSocket, failure-injection, load, backup, restore, or deletion test was performed.
+- AriCRM was reviewed in a clean detached worktree, but its OCTW integration remains unimplemented; the OpenClaw digest is resolved and identity-validated, but not lifecycle-compatibility validated.
 - The initial document set is tracked; the future approval record must still identify the exact reviewed revision.
 
 ## Open findings
@@ -55,23 +59,23 @@ task. A finding closes only when `PLAN.md` evidence exists at a committed source
 #### GOV-001 — Project documents were outside version control
 
 Resolved by commit `1f7b660`, which introduced all five files under
-`docs/projects/aricrm-octw`. Approval remains blocked by GOV-002 and Proposed decisions,
-not by absence of tracked documents.
+`docs/projects/aricrm-octw`. Approval is no longer blocked by absence of tracked
+documents.
 
 - Requirement: `SPEC.md` §14.
 - Evidence: commit `1f7b660`; `PLAN.md` Phase 0.
 
 ### P0 — Governance and baseline
 
-#### GOV-002 — Baseline lacks AriCRM and OpenClaw identity
+#### GOV-002 — Baseline approval evidence remains incomplete
 
-The manifest records an AriCRM candidate commit, OpenClaw version/digest, tool versions,
-commands, results, and limitations. The AriCRM working tree is dirty, and Docker/OpenClaw
-lifecycle compatibility testing remains required. The exact approved document revision and
-reviewer approval artifact remain required.
+The manifest records clean AriCRM audit evidence, OpenClaw version/digest, tool versions,
+commands, results, and limitations. D-010 through D-013 are now approved for the pilot,
+but Docker/OpenClaw lifecycle compatibility testing and the exact committed document
+revision remain required.
 
 - Requirement: `SPEC.md` §14.
-- Task: `PLAN.md` Phase 0 — clean AriCRM review baseline and pinned OpenClaw lifecycle compatibility validation; see `BASELINE.md`.
+- Task: `PLAN.md` Phase 0 — pinned OpenClaw lifecycle compatibility validation and committed approval revision; see `BASELINE.md`.
 
 ### P0 — Functional
 
@@ -89,7 +93,7 @@ services (`src/octw/edge/proxy.py:23`; `docker-compose.yml:61-76`).
 `octw_control` (`src/octw/orchestrator/docker_orch.py:117-123`;
 `docker-compose.yml:75-76`).
 
-- Requirement: `SPEC.md` §2.1 and §8; proposed decision D-010.
+- Requirement: `SPEC.md` §2.1 and §8; accepted pilot decision D-010.
 - Task: `PLAN.md` Phase 1 — worker-managed network attachment.
 
 #### FUN-003 — WebSocket is not proxied
@@ -178,7 +182,7 @@ an environment variable; the secret API also accepts a caller-selected target va
 (`src/octw/api/routers/provision_router.py:26-33,119-125`;
 `src/octw/api/routers/secrets_router.py:33-48`).
 
-- Requirement: `SPEC.md` §9.1; proposed decision D-012.
+- Requirement: `SPEC.md` §9.1; accepted decision D-012.
 - Task: `PLAN.md` Phase 2 — allowlisted slots and opaque staged references.
 
 #### SEC-007 — Any authenticated user can provision infrastructure
@@ -197,6 +201,9 @@ Settings retain development DB/Redis/JWT/image defaults, and application lifespa
 runs schema creation (`src/octw/common/config.py:9-24`;
 `src/octw/api/app.py:20-24`). Missing KEK and public listeners are not rejected.
 
+- Update 2026-07-19 (rev `ac10abc`): the default OpenClaw image now has an
+  immutable digest (`src/octw/common/config.py:13-14`), but DB/Redis/JWT
+  development defaults and the missing startup guard remain.
 - Requirement: `SPEC.md` §4.
 - Task: `PLAN.md` Phase 1 — startup guard and negative tests.
 
@@ -218,7 +225,7 @@ operation record (`src/octw/api/routers/provision_router.py:59-67`;
 `src/octw/api/routers/runtime_router.py:31-80`;
 `src/octw/api/routers/tenants_router.py:33-42,99-109`).
 
-- Requirement: `SPEC.md` §5 and §6; proposed decision D-011.
+- Requirement: `SPEC.md` §5 and §6; accepted decision D-011.
 - Task: `PLAN.md` Phase 2 — durable operations, DB uniqueness, canonical hashes, locks, and reconciliation.
 
 #### REL-003 — Failed provisioning can leave untracked resources
@@ -261,15 +268,26 @@ Deletion performs three synchronous cleanup calls and then hard-deletes the data
 `src/octw/orchestrator/tenant_service.py:127-147`). It does not disable ingress, revoke
 credentials, verify inventory, retain a tombstone, or recover partial failure.
 
-- Requirement: `SPEC.md` §10.1; proposed decision D-013.
+- Requirement: `SPEC.md` §10.1; accepted pilot decision D-013.
 - Task: `PLAN.md` Phase 2 — ordered durable deprovisioning and retention jobs.
 
 #### REL-008 — Backup, restore, retention, RPO, and RTO are unvalidated
 
 No completed runtime validation demonstrates the objectives proposed in `SPEC.md` §10.1.
 
-- Requirement: `SPEC.md` §10.1 and §13; proposed decision D-013.
+- Requirement: `SPEC.md` §10.1 and §13; accepted pilot decision D-013.
 - Task: `PLAN.md` Phase 4 — backup configuration and isolated restore exercise.
+
+#### REL-009 — Docker/OpenClaw lifecycle compatibility test does not pass
+
+Compose start/stop was validated only with a temporary local override because host port
+`6379` was already allocated. DB/Redis reached Docker `healthy`, API `/health` passed
+inside Compose, and `docker compose down -v` removed the test stack, but edge `/health`
+returned `404` and no tenant OpenClaw runtime was provisioned with the pinned digest.
+
+- Requirement: `SPEC.md` §3, §13, and §14.
+- Evidence: `BASELINE.md` Commands and results; `src/octw/edge/proxy.py:90-145`.
+- Task: `PLAN.md` Phase 0/1 — repair lifecycle health validation and add Docker lifecycle tests before treating the pin as supported.
 
 ### P1 — AriCRM integration and production policy
 
@@ -297,24 +315,27 @@ operation polling endpoint.
 Current settings use mutable global image/provider configuration
 (`src/octw/common/config.py:12-14,34-50`).
 
+- Update 2026-07-19 (rev `ac10abc`): the OpenClaw runtime image has a default
+  digest (`src/octw/common/config.py:13-14`), but there are still no immutable
+  provider, resource, or workspace-template profiles.
 - Requirement/task: `SPEC.md` §3 and §9; `PLAN.md` Phase 2.
 
 #### INT-005 — Pilot governance controls and measurable telemetry do not exist
 
 There is no implemented allowlist, quota, admission control, per-tenant cost attribution,
-kill switch, §13 gate instrumentation, or approved D-013 retention/recovery policy.
+kill switch, §13 gate instrumentation, or tested D-013 retention/recovery evidence.
 
 - Requirement/task: `SPEC.md` §4, §11, and §13; `PLAN.md` Phase 3/4.
 
 ## Recommendation
 
-Do not approve or deploy OCTW as an AriCRM dependency. Complete the baseline manifest,
-resolve D-010 through D-013, and then execute `PLAN.md` Phase 1. Source changes must
-close findings by stable ID with automated or reproducible evidence.
+Do not deploy OCTW as an AriCRM dependency. Complete the baseline manifest, fix
+REL-009, and then execute `PLAN.md` Phase 1. Source changes must close findings by
+stable ID with automated or reproducible evidence.
 
 ## Next action
 
-1. Complete the missing AriCRM/OpenClaw baseline fields and record the exact document revision reviewed.
-2. Review and resolve D-010 through D-013.
+1. Fix REL-009 and rerun Docker/OpenClaw lifecycle validation with the pinned digest.
+2. Record the exact committed document revision reviewed.
 3. Implement Phase 1 beginning with startup rejection, internal/service authentication,
    edge authorization, Host-header fallback removal, worker separation, and migrations.

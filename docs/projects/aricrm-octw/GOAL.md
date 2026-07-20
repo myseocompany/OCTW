@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed. No production implementation has started.
+Approved for implementation planning. No production implementation has started.
 
 - Last reviewed: 2026-07-19
 - Source baseline: OCTW `299c33b368c579db62339ccdccc51e53bca5345c`

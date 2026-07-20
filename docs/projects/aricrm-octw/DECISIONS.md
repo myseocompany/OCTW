@@ -45,7 +45,7 @@ approved policy.
 - Decision: lifecycle writes create durable operations and return `202`; creation requires an idempotency key.
 - Rationale: Docker pulls, onboarding, verification, and cleanup are slow and partially fallible.
 - Consequence: OCTW needs workers, operation storage, locks, and reconciliation; AriCRM handles pending state and polling.
-- Follow-up: D-011 proposes extending mandatory idempotency keys from creation to every mutation.
+- Follow-up: D-011 extends mandatory idempotency keys from creation to every mutation.
 
 ## D-006 — AriCRM tenant UUID as external reference
 
@@ -81,7 +81,7 @@ approved policy.
 
 ## D-010 — Shared edge is a trusted pilot component
 
-- Status: Proposed
+- Status: Accepted for pilot
 - Date: 2026-07-19
 - Decision: for the pilot, use one hardened shared edge that the worker attaches to isolated tenant ingress networks.
 - Rationale: this preserves the existing OCTW routing model while allowing the first pilot to validate authorization, WebSocket behavior, wake-up, and network isolation.
@@ -90,7 +90,7 @@ approved policy.
 
 ## D-011 — Idempotency applies to every mutation
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-19
 - Decision: every mutating platform request requires an idempotency key scoped by service identity, route, semantic action, and key; durable database uniqueness is the correctness mechanism.
 - Rationale: retries and concurrent delivery affect lifecycle, secret, retry, cancellation, and deletion operations, not only creation.
@@ -99,7 +99,7 @@ approved policy.
 
 ## D-012 — Opaque staged secret references
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-19
 - Decision: AriCRM binds allowlisted semantic slots to opaque, versioned `octw-secret://` references; values enter OCTW only through write-only staging and rotation endpoints.
 - Rationale: callers must not control environment-variable names or retrieve runtime secrets, while provisioning still needs a deterministic contract for required credentials.
@@ -108,9 +108,9 @@ approved policy.
 
 ## D-013 — Pilot retention, reuse cooldown, and recovery objectives
 
-- Status: Proposed — privacy/legal and operations approval required
+- Status: Accepted for pilot
 - Date: 2026-07-19
 - Decision: use the pilot defaults in `SPEC.md` §3 and §10.1: seven-day external-reference reuse cooldown; 30-day idempotency/callback retention; 90-day operations/log retention; 365-day sanitized audit/tombstone retention; control-plane RPO 15 minutes/RTO 4 hours; tenant-workspace RPO 24 hours/RTO 8 hours.
 - Rationale: deletion, retries, incident investigation, privacy, backup expiry, and recovery tests need explicit time bounds before implementation.
-- Consequence: these values are not production policy until privacy/legal and operations approve them. Phase 0 cannot exit, and the pilot cannot start, while this decision remains Proposed.
+- Consequence: these values are approved pilot policy by the project owner. General availability still requires explicit reapproval after restore, deletion, privacy, and operations evidence exists.
 - Specification: `SPEC.md` §3, §10.1, and §13.
