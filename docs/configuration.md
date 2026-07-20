@@ -36,8 +36,8 @@ At least one provider key is required for provisioning. See [providers.md](provi
 
 | Variable | Default | Description |
 |---|---|---|
-| `OCTW_OPENCLAW_IMAGE` | `ghcr.io/openclaw/openclaw:latest` | OpenClaw container image |
-| `OCTW_OPENCLAW_DIGEST` | — | Pin image by digest (recommended for production) |
+| `OCTW_OPENCLAW_IMAGE` | `ghcr.io/openclaw/openclaw` | OpenClaw container image repository |
+| `OCTW_OPENCLAW_DIGEST` | `sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c` | Immutable OpenClaw image digest |
 
 ## Networking
 

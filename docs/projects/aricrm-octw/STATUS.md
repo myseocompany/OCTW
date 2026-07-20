@@ -12,9 +12,10 @@
 - OCTW source audited: `299c33b368c579db62339ccdccc51e53bca5345c`
 - Document revision audited: `a25781e` (docs only; source baseline unchanged)
 - Upstream comparison SHA: `299c33b368c579db62339ccdccc51e53bca5345c` — confirmed with `git fetch upstream && git log upstream/main -1`; must be recorded in the baseline manifest
-- AriCRM SHA audited: not recorded — baseline blocker
-- OpenClaw version/image digest: not recorded — baseline blocker
+- AriCRM SHA audited: candidate `4b5539c72cf0a7cab93e7df0ac5920237255bdfd` on `main`; working tree is dirty, so a clean reviewed SHA remains a baseline blocker
+- OpenClaw version/image digest: `2026.7.1`; `ghcr.io/openclaw/openclaw@sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c` — pulled and verified with `openclaw --version`; lifecycle compatibility validation remains required
 - Project-document baseline: introduced in commit `1f7b660`; each approval/re-audit must record its exact reviewed revision
+- Baseline manifest: `BASELINE.md` — incomplete; see its limitations and closure requirements
 - Requirements: `SPEC.md`
 - Delivery tasks: `PLAN.md`
 - Architecture decisions: `DECISIONS.md`
@@ -31,6 +32,8 @@ did not implement ordered deletion or tombstones.
 - Chose a separate OCTW host; see `DECISIONS.md` D-002.
 - Parsed/compiled the current Python source and tests successfully with `python3 -m compileall -q src tests` using Python 3.14.5.
 - Validated `docker compose config -q`; it passed while warning that `OCTW_KEK` was unset and defaulted to an empty string.
+- Confirmed `upstream/main` at `299c33b368c579db62339ccdccc51e53bca5345c` with `git fetch upstream`.
+- Resolved OpenClaw `2026.7.1` to its immutable OCI index digest, pulled it through OrbStack, and verified it with `openclaw --version`; see `BASELINE.md`.
 - Reconciled and versioned `GOAL.md`, `SPEC.md`, `PLAN.md`, `STATUS.md`, and `DECISIONS.md`; the set was introduced in commit `1f7b660`.
 
 These checks do not establish runtime correctness or production readiness.
@@ -39,7 +42,7 @@ These checks do not establish runtime correctness or production readiness.
 
 - `uv` and `pytest` are unavailable, so the automated suite was not executed.
 - No end-to-end Docker/OpenClaw, HTTP/WebSocket, failure-injection, load, backup, restore, or deletion test was performed.
-- No AriCRM source SHA or OpenClaw image digest is attached to this audit.
+- The AriCRM candidate SHA is not an approved baseline because its working tree is dirty; the OpenClaw digest is resolved but not runtime-validated.
 - The initial document set is tracked; the future approval record must still identify the exact reviewed revision.
 
 ## Open findings
@@ -62,11 +65,13 @@ not by absence of tracked documents.
 
 #### GOV-002 — Baseline lacks AriCRM and OpenClaw identity
 
-The audit records OCTW HEAD but not the AriCRM commit, supported OpenClaw version/image
-digest, document SHA, reviewer artifact, or exact environment manifest.
+The manifest records an AriCRM candidate commit, OpenClaw version/digest, tool versions,
+commands, results, and limitations. The AriCRM working tree is dirty, and Docker/OpenClaw
+lifecycle compatibility testing remains required. The exact approved document revision and
+reviewer approval artifact remain required.
 
 - Requirement: `SPEC.md` §14.
-- Task: `PLAN.md` Phase 0 — baseline manifest and pinned OpenClaw digest.
+- Task: `PLAN.md` Phase 0 — clean AriCRM review baseline and pinned OpenClaw lifecycle compatibility validation; see `BASELINE.md`.
 
 ### P0 — Functional
 

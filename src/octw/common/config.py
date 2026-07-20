@@ -10,8 +10,8 @@ class OCTWSettings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
 
     tenant_base_dir: str = "/var/lib/octw/tenants"
-    openclaw_image: str = "ghcr.io/openclaw/openclaw:latest"
-    openclaw_digest: str | None = None
+    openclaw_image: str = "ghcr.io/openclaw/openclaw"
+    openclaw_digest: str | None = "sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c"
 
     edge_listen_host: str = "0.0.0.0"
     edge_listen_port: int = 8443

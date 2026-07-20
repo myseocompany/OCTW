@@ -26,7 +26,7 @@ Closing a checkbox requires code, automated evidence where applicable, and an up
 - [ ] Approve `GOAL.md` and `SPEC.md`, and resolve Proposed decisions D-010 through D-013. (`SPEC.md` status; `DECISIONS.md`)
 - [ ] Obtain privacy/legal and operations approval for D-013 or replace its proposed values. (`SPEC.md` §3 and §10.1)
 - [ ] Define CI, branch protection, releases, dependency updates, and the environment matrix. (`SPEC.md` §14)
-- [ ] Record and test the supported OpenClaw version and immutable image digest. (`SPEC.md` §3 and §14)
+- [x] Record OpenClaw `2026.7.1` and immutable index digest `sha256:6a31d44b2944e7adcd2b582bf6fb463111264ebca97a0201795b799135bd102c`; pull and verify it with `openclaw --version`. Lifecycle compatibility testing remains required. (`SPEC.md` §3 and §14; `BASELINE.md`)
 
 Exit: the documents and evidence are committed, the baseline is reproducible, no
 required decision remains Proposed, and every open finding maps to an implementation
