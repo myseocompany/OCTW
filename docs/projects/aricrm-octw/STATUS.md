@@ -3,7 +3,8 @@
 ## Snapshot
 
 - Date: 2026-07-19
-- Stage: audit and planning
+- Stage: Phase 0 closed; Phase 1 implementation not started
+- Phase 0 exit: met on 2026-07-19 — REL-009 resolved by `ac71e3b` (edge `/health` route ordering; regression test `tests/unit/test_edge_proxy.py:8`) with post-fix Compose evidence in `65a3d37`; approved document revision `d6fddaa3582911a7633fcc2f06e7eb0ad4466c05` recorded by `28ae613`; every open finding maps to a Phase 1+ task in `PLAN.md`. Full tenant OpenClaw lifecycle compatibility remains Phase 1 evidence, not a Phase 0 gate.
 - Implementation: not started
 - Production readiness: no-go
 - OCTW fork: `https://github.com/myseocompany/OCTW`
